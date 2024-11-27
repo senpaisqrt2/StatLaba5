@@ -73,7 +73,7 @@ print("\nЗадание 1: Структурная идентификация (с
 for key, mean in structural_means.items():
     print(f"Зависимость: {key.capitalize()}, Средние значения: ̅x_s = {round(mean[0], 1)}, ̅y_s = {round(mean[1], 1)}, "
           f"Экспериментальное значение y_s = {round(experimental_values[key], 1)}, Отклонение Δ_s = {round(absolute_deviations[key], 1)} "
-          f"({round(percent_deviations[key], 1)}%)")
+          f"({round(percent_deviations[key], 2)}%)")
 
 min_deviation_key = min(absolute_deviations, key=absolute_deviations.get)
 print(f"Минимальное отклонение у зависимости: {min_deviation_key.capitalize()}")
@@ -83,6 +83,33 @@ print(f"Минимальное отклонение у зависимости: {
 fixed_degree = 5  # Фиксированная степень многочлена
 
 # Создаем массивы для аппроксимации
+x_vals = np.array(data_df["Age"], dtype=np.float64)
+frequencies = np.array(data_df["Frequency"], dtype=np.float64)
+# print(x_vals, frequencies)
+
+def compute_differences(frequencies):
+    return [abs(frequencies[i - 1] - frequencies[i]) for i in range(1, len(frequencies))]
+
+differences = frequencies
+
+# Сумма частот и вычисление 2% от суммы
+total_frequency = sum(frequencies)
+threshold = 0.02 * total_frequency
+
+max_degree = 1
+
+while max(compute_differences(differences)) > threshold:
+    differences = compute_differences(differences)
+    # print(differences)
+    # print('Максимальное значение ', max_degree, 'ряда разности: ', max(differences))
+    max_degree = max_degree + 1
+
+differences = compute_differences(differences)
+# print(differences)
+print('Максимальное значение ', max_degree, 'ряда разности: ', max(differences))
+print('2 % от суммы частот: ', threshold)
+print('Показатель степени аппроксимирующего многочлена: ', max_degree)
+
 x_vals = np.array(data_df["Age"], dtype=np.float64)
 y_vals = np.array(data_df["Frequency"], dtype=np.float64)
 
@@ -98,10 +125,6 @@ differences = np.abs(y_vals - approximations)
 max_difference = np.max(differences)
 percent_difference = (max_difference / sum(frequencies)) * 100
 
-# Вывод результатов для Задания 2
-print("\nЗадание 2: Аппроксимирующий многочлен (фиксированная степень = 5)")
-print(f"Максимальная разность: {max_difference:.2f}")
-print(f"Процентная разность от общей суммы частот: {percent_difference:.2f}%")
 
 # Построение графика полигона частот
 plt.figure(figsize=(10, 6))
