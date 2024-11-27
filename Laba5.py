@@ -26,10 +26,10 @@ def calculate_structural_means(df):
         "linear": ((x1 + xn) / 2, (y1 + yn) / 2),
         "geometric": (np.sqrt(x1 * xn), np.sqrt(y1 * yn)),
         "harmonic": ((x1 + xn) / 2, np.sqrt(y1 * yn)),
-        "dependency_4": ((2 * x1 * xn) / (x1 + xn), (y1 + yn) / 2),
-        "dependency_5": ((x1 + xn) / 2, (2 * y1 * yn) / (y1 + yn)),
-        "dependency_6": ((2 * x1 * xn) / (x1 + xn), (2 * y1 * yn) / (y1 + yn)),
-        "dependency_7": (np.sqrt(x1 * xn), (y1 + yn) / 2)
+        "hyperbolic": ((2 * x1 * xn) / (x1 + xn), (y1 + yn) / 2),
+        "inverse_linear": ((x1 + xn) / 2, (2 * y1 * yn) / (y1 + yn)),
+        "fractional_linear": ((2 * x1 * xn) / (x1 + xn), (2 * y1 * yn) / (y1 + yn)),
+        "logarithmic": (np.sqrt(x1 * xn), (y1 + yn) / 2)
     }
     return means
 
@@ -47,13 +47,13 @@ def calculate_experimental_values(df, means):
     for dependency, (x_avg, _) in means.items():
         if dependency == "geometric":
             y_s = 796
-        elif dependency == "dependency_4":
+        elif dependency == "hyperbolic":
             y_s = 940.5
-        elif dependency == "dependency_5":
+        elif dependency == "inverse_linear":
             y_s = 926
-        elif dependency == "dependency_6":
+        elif dependency == "fractional_linear":
             y_s = 940.5
-        elif dependency == "dependency_7":
+        elif dependency == "logarithmic":
             y_s = 796
         else:
             y_s = np.interp(x_avg, x_values, y_values)  # Интерполяция для остальных зависимостей
