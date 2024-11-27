@@ -25,7 +25,11 @@ def calculate_structural_means(df):
     means = {
         "linear": ((x1 + xn) / 2, (y1 + yn) / 2),
         "geometric": (np.sqrt(x1 * xn), np.sqrt(y1 * yn)),
-        "harmonic": ((2 * x1 * xn) / (x1 + xn), (2 * y1 * yn) / (y1 + yn))
+        "harmonic": ((2 * x1 * xn) / (x1 + xn), (2 * y1 * yn) / (y1 + yn)),
+        "dependency_4": ((2 * x1 * xn) / (x1 + xn), (y1 + yn) / 2),
+        "dependency_5": ((x1 + xn) / 2, (2 * y1 * yn) / (y1 + yn)),
+        "dependency_6": ((2 * x1 * xn) / (x1 + xn), (2 * y1 * yn) / (y1 + yn)),
+        "dependency_7": (np.sqrt(x1 * xn), (y1 + yn) / 2)
     }
     return means
 
@@ -42,6 +46,14 @@ min_deviation_key = min(absolute_deviations, key=absolute_deviations.get)
 
 # Расчет процента отклонений
 percent_deviations = {key: (dev / sum(frequencies)) * 100 for key, dev in absolute_deviations.items()}
+
+# Вывод результатов для Задания 1
+print("\nЗадание 1: Структурная идентификация")
+for key, mean in structural_means.items():
+    print(f"Зависимость: {key.capitalize()}, Средние значения: ̅x_s = {round(mean[0], 1)}, ̅y_s = {round(mean[1], 1)}, "
+          f"Экспериментальное значение y_s = {round(y_s, 1)}, Отклонение Δ_s = {round(absolute_deviations[key], 1)} "
+          f"({round(percent_deviations[key], 1)}%)")
+print(f"Минимальное отклонение у зависимости: {min_deviation_key.capitalize()}")
 
 # Задание 2: Аппроксимирующий многочлен
 # Определение степени многочлена, соответствующей условию
@@ -67,12 +79,7 @@ for degree in range(1, max_degree + 1):
         best_degree = degree
         break
 
-# Вывод результатов
-print("\nЗадание 1: Структурная идентификация")
-for key, mean in structural_means.items():
-    print(f"Зависимость: {key.capitalize()}, Средние значения: \u0305x_s = {mean[0]:.2f}, \u0305y_s = {mean[1]:.2f}, Отклонение \u0394_s = {absolute_deviations[key]:.2f} ({percent_deviations[key]:.2f}%)")
-print(f"Минимальное отклонение у зависимости: {min_deviation_key.capitalize()}")
-
+# Вывод результатов для Задания 2
 print("\nЗадание 2: Аппроксимирующий многочлен")
 if best_degree:
     print(f"Оптимальная степень аппроксимирующего многочлена: {best_degree}")
