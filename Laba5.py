@@ -79,32 +79,29 @@ min_deviation_key = min(absolute_deviations, key=absolute_deviations.get)
 print(f"Минимальное отклонение у зависимости: {min_deviation_key.capitalize()}")
 
 # Задание 2: Аппроксимирующий многочлен
-# Определение степени многочлена, соответствующей условию
-max_degree = 10  # Максимальная степень многочлена для проверки
+# Определение степени многочлена (фиксированная степень = 5)
+fixed_degree = 5  # Фиксированная степень многочлена
 
 # Создаем массивы для аппроксимации
 x_vals = np.array(data_df["Age"], dtype=np.float64)
 y_vals = np.array(data_df["Frequency"], dtype=np.float64)
 
-# Перебираем степени и проверяем разности
-best_degree = None
-for degree in range(1, max_degree + 1):
-    coefficients = np.polyfit(x_vals, y_vals, degree)
-    polynomial = np.poly1d(coefficients)
+# Построение аппроксимации для фиксированной степени
+coefficients = np.polyfit(x_vals, y_vals, fixed_degree)
+polynomial = np.poly1d(coefficients)
 
-    approximations = polynomial(x_vals)
-    differences = np.abs(y_vals - approximations)
+# Вычисление аппроксимированных значений
+approximations = polynomial(x_vals)
+differences = np.abs(y_vals - approximations)
 
-    if np.max(differences) <= 0.02 * sum(frequencies):
-        best_degree = degree
-        break
+# Проверка условия максимальной разности
+max_difference = np.max(differences)
+percent_difference = (max_difference / sum(frequencies)) * 100
 
 # Вывод результатов для Задания 2
-print("\nЗадание 2: Аппроксимирующий многочлен")
-if best_degree:
-    print(f"Оптимальная степень аппроксимирующего многочлена: {best_degree}")
-else:
-    print("Не найден многочлен, удовлетворяющий условию (максимальная разность <= 2% от суммы частот)")
+print("\nЗадание 2: Аппроксимирующий многочлен (фиксированная степень = 5)")
+print(f"Максимальная разность: {max_difference:.2f}")
+print(f"Процентная разность от общей суммы частот: {percent_difference:.2f}%")
 
 # Построение графика полигона частот
 plt.figure(figsize=(10, 6))
@@ -116,18 +113,14 @@ plt.legend()
 plt.grid()
 plt.show()
 
-# Построение аппроксимирующего графика для лучшей степени (если найдено)
-if best_degree:
-    coefficients = np.polyfit(x_vals, y_vals, best_degree)
-    polynomial = np.poly1d(coefficients)
-    approximations = polynomial(x_vals)
+# Построение аппроксимирующего графика для степени 5
+plt.figure(figsize=(10, 6))
+plt.plot(x_vals, y_vals, label="Исходные данные", marker="o")
+plt.plot(x_vals, approximations, label="Аппроксимация (степень 5)", linestyle="--")
+plt.title("Аппроксимация частот многочленом (степень 5)")
+plt.xlabel("Возраст")
+plt.ylabel("Частота")
+plt.legend()
+plt.grid()
+plt.show()
 
-    plt.figure(figsize=(10, 6))
-    plt.plot(x_vals, y_vals, label="Исходные данные", marker="o")
-    plt.plot(x_vals, approximations, label=f"Аппроксимация (степень {best_degree})", linestyle="--")
-    plt.title("Аппроксимация частот многочленом")
-    plt.xlabel("Возраст")
-    plt.ylabel("Частота")
-    plt.legend()
-    plt.grid()
-    plt.show()
